@@ -116,6 +116,9 @@ def buy(bookmark):
     if pos is not None and not stop_flag:
         pos_center = pyautogui.center(pos)
         # Hacer clic en comprar
+    #==============================================================================
+    # SI HACE CLICK FUERA AL INTENTAR COMPRAR, AJUSTAR EL VALOR POR DEFECTO DE 'X' 800 AL CORRECTO SEGUN VUESTRA PANTALLA Y EL DE LA 'Y' TAMBIEN SI ES NECESARIO
+    #==============================================================================
         click(pos_center.x + 800 + rand_x, pos_center.y + 40 + rand_y)
         click(pos_center.x + 800 + rand_x, pos_center.y + 30 + rand_y)
         time.sleep(random.uniform(0.2, 0.4)) # Esperar por el botón de confirmación
