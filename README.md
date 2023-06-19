@@ -1,27 +1,24 @@
-# E7 Macro Reroll Tienda
+# E7 Macro Reroll Shop
 
-El codigo tiene muchas referencias de dengpris, simplemente fue modificado para que funcione actualmente y añadir una interfaz visual para que funcione actualmente(July-2023),[E7-Secret-Shop-Auto-Refresher](https://github.com/dengpris/E7-Secret-Shop-Auto-Refresher) by dengpris.
+Este código es una versión modificada del proyecto original *E7-Secret-Shop-Auto-Refresher* de *dengpris*. Se ha adaptado para que funcione en la versión actual (Julio de 2023) y se ha añadido una interfaz visual.
 
-## Dependencias que instalar
+## Dependencias a instalar
 
-Si ya teneis fribbels-optimicer instalado podeis saltaros este paso.
+Si ya tienes instalado *fribbels-optimizer*, puedes saltarte el paso de instalar Python.
 
--Instalar Python (https://www.python.org/downloads/):
+- Instala Python (`https://www.python.org/downloads/`)
 
--Instalar Pip (https://pip.pypa.io/en/stable/installation/):
+- Instala Pip (`https://pip.pypa.io/en/stable/installation/`)
 
--Instalar las dependencias con pip:
-En CMD ejecutar:
-```
-pip install -r requirements.txt
+- Ejecuta `install.bat`
 
-```
+## Cómo utilizar el script
+1. Asegúrate de que el emulador esté en modo de pantalla completa.
+2. Captura imágenes/recortes de cada una de las imágenes que se encuentran en la carpeta `/my_images`.
+3. Reemplaza las imágenes capturadas con las correspondientes en tu emulador. Asegúrate de que los nombres de archivo sean idénticos.
+4. Ejecuta `run.bat` como *ADMINISTRADOR*.
+5. Introduce la cantidad de minutos que deseas que se ejecute la macro sin pausa.
 
-## Usar el script
-1. Teneis que poner el emulador en pantalla completa.
-2. Sacar fotos/recortes de cada una de las imagenes que se encuentran en /my_images.
-3. Sustituir las imagesnes con las que sacasteis de vuestro emulador, tienen que llamarse exactamente igual.
-4. Ejecutar el run.bat como ADMINISTRADOR
-5. Introducir los minutos que querais que ejecute la macro sin pausa.
+Es posible que el código requiera ajustes en los píxeles según el emulador/resolución utilizados.
 
-## Para detener la ejecución pulsar ESC
+**Para detener la ejecución, pulsa ESC.**
