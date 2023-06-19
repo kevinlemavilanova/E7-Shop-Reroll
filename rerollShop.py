@@ -232,7 +232,6 @@ def macro():
     while exit_flag == 0 and not stop_flag:
         if not pause_flag:
             start_time = time.time()
-            time.sleep(2) # Esperar 2 segundos por si el usuario necesita hacer clic en Bluestacks
             
             chk_dispatch()
 
