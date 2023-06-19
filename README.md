@@ -24,4 +24,5 @@ pip install -r requirements.txt
 4. Ejecutar el run.bat como ADMINISTRADOR
 5. Introducir los minutos que querais que ejecute la macro sin pausa.
 
+Es posible que el código necesite ajustes de pixeles dependiendo del emulador/resolucion
 ## Para detener la ejecución pulsar ESC
