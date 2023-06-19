@@ -21,7 +21,7 @@ pip install -r requirements.txt
 1. Teneis que poner el emulador en pantalla completa.
 2. Sacar fotos/recortes de cada una de las imagenes que se encuentran en /my_images.
 3. Sustituir las imagesnes con las que sacasteis de vuestro emulador, tienen que llamarse exactamente igual.
-4. Ejecutar el run.bat
+4. Ejecutar el run.bat como ADMINISTRADOR
 5. Introducir los minutos que querais que ejecute la macro sin pausa.
 
 ## Para detener la ejecución pulsar ESC

@@ -1,4 +1,3 @@
 @echo off
 cd /d %~dp0
-python rerollShop.py
-pause
+start /B pyw -3 rerollShop.py
