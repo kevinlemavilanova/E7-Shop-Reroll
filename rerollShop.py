@@ -150,14 +150,16 @@ def buy(bookmark):
     update_results()
 
 
-def chk_cove(pos):
+def chk_cove():
     global cove_buyed
+    pos = pyautogui.locateOnScreen('my_images/covenant.png', confidence=0.8)
     if pos is not None and not cove_buyed:
         time.sleep(random.uniform(0.2, 0.4))
         buy('covenant')
 
-def chk_mystic(pos):
+def chk_mystic():
     global mystic_buyed
+    pos = pyautogui.locateOnScreen('my_images/mystic.png', confidence=0.8)
     if pos is not None and not mystic_buyed:
         time.sleep(random.uniform(0.2, 0.4))
         buy('mystic')
@@ -193,6 +195,7 @@ def scroll_down():
     time.sleep(random.uniform(0.2, 0.4))
     pyautogui.mouseUp(button='left', x=scroll_pt_x, y=scroll_pt_y - 300)
     # pyautogui.scroll(-2, x=scroll_pt_x, y=scroll_pt_y)
+    time.sleep(random.uniform(0.3, 0.4))
 
 def refresh():
     chk_dispatch()
@@ -244,25 +247,18 @@ def macro():
                 sys.exit()
 
             while exit_flag == 0 and (time.time() - start_time) < run_timeout and not stop_flag:
-                print(time.time()," ->", start_time, run_timeout, time.time() - start_time)
                 chk_dispatch()
-                Coven_pos = pyautogui.locateOnScreen('my_images/covenant.png', confidence=0.8)
-                Mystic_pos = pyautogui.locateOnScreen('my_images/mystic.png', confidence=0.8)
 
                 # Comprobar covenants/mystics
-                chk_cove(Coven_pos)
-                chk_mystic(Mystic_pos)
+                chk_cove()
+                chk_mystic()
 
                 # Desplazarse hacia abajo
                 scroll_down()
 
-                time.sleep(0.5)
-                Coven_pos2 = pyautogui.locateOnScreen('my_images/covenant.png', confidence=0.8)
-                Mystic_pos2 = pyautogui.locateOnScreen('my_images/mystic.png', confidence=0.8)
-
                 # Comprobar covenants/mystics nuevamente
-                chk_cove(Coven_pos2)
-                chk_mystic(Mystic_pos2)
+                chk_cove()
+                chk_mystic()
 
                 # Actualizar la lista
                 refresh()
