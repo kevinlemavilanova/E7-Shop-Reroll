@@ -211,6 +211,7 @@ def refresh():
             if pause_flag:
                 time.sleep(0.1)
                 continue
+            chk_dispatch()
             confirm_pos = pyautogui.locateOnScreen('my_images/confirm_button.png', confidence=0.8)
 
             if confirm_pos is not None:
@@ -228,11 +229,11 @@ def macro():
     global exit_flag, debug_timer, covenant_count, mystic_count, refresh_count, macro_thread
 
     macro_thread = threading.current_thread()
-    
+
+    start_time = time.time()
+
     while exit_flag == 0 and not stop_flag:
         if not pause_flag:
-            start_time = time.time()
-            
             chk_dispatch()
 
             # Localizar botón de refresco
@@ -242,7 +243,8 @@ def macro():
                 print("Error: Botón de refresco no encontrado.")
                 sys.exit()
 
-            while exit_flag == 0 and time.time() < start_time + run_timeout and not stop_flag:
+            while exit_flag == 0 and (time.time() - start_time) < run_timeout and not stop_flag:
+                print(time.time()," ->", start_time, run_timeout, time.time() - start_time)
                 chk_dispatch()
                 Coven_pos = pyautogui.locateOnScreen('my_images/covenant.png', confidence=0.8)
                 Mystic_pos = pyautogui.locateOnScreen('my_images/mystic.png', confidence=0.8)
