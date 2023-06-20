@@ -25,6 +25,8 @@ gold_consumed_val  = IntVar()
 # Estado de pausa
 pause_flag = False
 stop_flag = False
+use_time_flag = False
+use_skystones_flag = False
 
 # Contadores
 mystic_count = 0
@@ -37,6 +39,7 @@ exit_flag = 0
 cove_buyed = False
 mystic_buyed = False
 run_timeout = 0
+skystones_max = 0
 
 rand_x = random.randrange(-60, 60)
 rand_y = random.randrange(-15, 15)
@@ -66,12 +69,25 @@ def stop_macro(event=None):
 
 # Define una función para ejecutar la macro en segundo plano
 def run_macro():
-    global run_timeout, stop_flag
+    global run_timeout, stop_flag, skystones_max, use_time_flag, use_skystones_flag
     stop_flag = False
     # Obtener el valor del campo de entrada
-    minutes = int(entry.get())
-    # Convertir minutos a segundos
-    run_timeout = minutes * 60
+    minutes = entry_minutes.get()
+    skystones = entry_skystones.get()
+    if not minutes or not skystones:
+        # Al menos uno de los campos de entrada está vacío
+        # Activar la bandera correspondiente según si se usa tiempo o skystones
+        if not minutes:
+            use_time_flag = False
+        if not skystones:
+            use_skystones_flag = False
+    if minutes:
+        use_time_flag = True
+        run_timeout = int(minutes) * 60
+    if skystones:
+        use_skystones_flag = True
+        skystones_max = int(skystones)
+
     macro_thread = threading.Thread(target=macro)
     macro_thread.start()
 
@@ -229,10 +245,9 @@ def refresh():
 
 
 def macro():
-    global exit_flag, debug_timer, covenant_count, mystic_count, refresh_count, macro_thread
+    global exit_flag, debug_timer, covenant_count, mystic_count, refresh_count, macro_thread, use_skystones_flag, use_time_flag, skystones_max, stop_flag
 
     macro_thread = threading.current_thread()
-
     start_time = time.time()
 
     while exit_flag == 0 and not stop_flag:
@@ -246,7 +261,15 @@ def macro():
                 print("Error: Botón de refresco no encontrado.")
                 sys.exit()
 
-            while exit_flag == 0 and (time.time() - start_time) < run_timeout and not stop_flag:
+            while exit_flag == 0 and ((use_time_flag == False) or (time.time() - start_time) < run_timeout) and not stop_flag:
+                print(refresh_count * 3, skystones_max)
+                if use_skystones_flag:
+                    if not (refresh_count * 3) < skystones_max:
+                        stop_flag = True
+
+                if stop_flag:
+                    break
+
                 chk_dispatch()
 
                 # Comprobar covenants/mystics
@@ -263,10 +286,7 @@ def macro():
                 # Actualizar la lista
                 refresh()
 
-                if not stop_flag:
-                    break
-
-                time.sleep(0.5)
+            time.sleep(0.5)
 
 
     end_time = time.time()
@@ -283,7 +303,7 @@ def macro():
 
 
 # Configurar el tamaño y título de la ventana
-root.geometry("300x200")
+root.geometry("370x200")
 root.title("Epic Seven Macro")
 
 # Configurar la ventana para que esté siempre en primer plano
@@ -298,13 +318,20 @@ style.configure("TButton", font=("Arial", 12))
 frame = ttk.Frame(root)
 frame.pack(padx=10, pady=10)
 
+label_minutes = ttk.Label(frame, text="Minutos:")
+label_minutes.grid(row=0, column=0, sticky="W", padx=5, pady=2)
+label_skystones = ttk.Label(frame, text="Skystones:")
+label_skystones.grid(row=1, column=0, sticky="W", padx=5, pady=2)
+
 # Crear el campo de entrada
-entry = ttk.Entry(frame)
-entry.grid(row=0, column=0)
+entry_minutes = ttk.Entry(frame)
+entry_minutes.grid(row=0, column=1)
+entry_skystones = ttk.Entry(frame)
+entry_skystones.grid(row=1, column=1)
 
 # Crear un botón para ejecutar la macro
 button_run_macro = ttk.Button(frame, text="Iniciar", command=run_macro)
-button_run_macro.grid(row=0, column=1, padx=10)
+button_run_macro.grid(row=0, column=2, rowspan=2, padx=10, pady=(0, 5), sticky="NS")
 
 # Crear etiquetas para mostrar los resultados
 label_covenant_count = ttk.Label(root, text="Covenants comprados: " + str(covenant_count))
