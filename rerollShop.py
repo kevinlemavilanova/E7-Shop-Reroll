@@ -10,7 +10,9 @@ import tkinter as tk
 from tkinter import IntVar, ttk
 import threading
 import keyboard
-
+import csv
+import os
+from datetime import datetime
 
 # Crea una instancia de Tkinter
 root = tk.Tk()
@@ -168,6 +170,7 @@ def buy(bookmark):
 
 def chk_cove():
     global cove_buyed
+    time.sleep(0.4)
     pos = pyautogui.locateOnScreen('my_images/covenant.png', confidence=0.8)
     if pos is not None and not cove_buyed:
         time.sleep(random.uniform(0.2, 0.4))
@@ -175,6 +178,7 @@ def chk_cove():
 
 def chk_mystic():
     global mystic_buyed
+    time.sleep(0.4)
     pos = pyautogui.locateOnScreen('my_images/mystic.png', confidence=0.8)
     if pos is not None and not mystic_buyed:
         time.sleep(random.uniform(0.2, 0.4))
@@ -198,20 +202,16 @@ def scroll_down():
     time.sleep(random.uniform(0.2, 0.4))
     #==============================================================================
     # SI EL CLICK DEL SCROLL LO HACE MUY CERCA DE LAS IMAGENES DE LOS ITEMS/HEROES REDUCIR EL VALOR DE LA X 
-    # ej: random.randint(1200, 1400)
     #==============================================================================
     scroll_pt_x = random.randint(1100, 1400)
-    scroll_pt_y = random.randint(500, 780)
-    click(scroll_pt_x, scroll_pt_y)
+    scroll_pt_y = random.randint(700, 900)
+    win32api.SetCursorPos((scroll_pt_x, scroll_pt_y))
 
     #==============================================================================
     # SI NO FUNCIONA EL SCROLL, COMENTAR LAS TRES LINEAS SIGUIENTES Y DESCOMENTAR LA 4ª
     #==============================================================================
-    pyautogui.mouseDown(button='left')
-    time.sleep(random.uniform(0.2, 0.4))
-    pyautogui.mouseUp(button='left', x=scroll_pt_x, y=scroll_pt_y - 300)
-    # pyautogui.scroll(-2, x=scroll_pt_x, y=scroll_pt_y)
     time.sleep(random.uniform(0.3, 0.4))
+    pyautogui.dragTo(scroll_pt_x, scroll_pt_y-random.randint(400, 500), 0.2, button='left')
 
 def refresh():
     chk_dispatch()
@@ -243,6 +243,39 @@ def refresh():
     cove_buyed = False
     update_results()
 
+def obtener_fecha():
+    fecha_actual = datetime.now().strftime('%d/%m/%y')
+    return fecha_actual
+
+def guardar_en_csv(valores, archivo):
+    existe = os.path.exists(archivo)
+    
+    with open(archivo, mode='a', newline='') as csv_file:
+        fieldnames = ['Fecha', 'Skystones','Covenants', 'Mystics', 'Oro', 'ss/cov', 'ss/mystics', 'Cuenta']
+        writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+        
+        if not existe:
+            writer.writeheader()
+        
+        for valor in valores:
+            valor['Fecha'] = obtener_fecha()
+            writer.writerow(valor)
+
+def save_csv():
+    valores_nuevos = [
+    {   'Fecha': '',
+        'Skystones': refresh_count * 3,
+        'Covenants': covenant_count * 5,
+        'Mystics': mystic_count * 50,
+        'Oro': covenant_count * 184000 + mystic_count * 280000,
+        'ss/cov': 0 if covenant_count == 0 else (refresh_count * 3)/covenant_count*5,
+        'ss/mystics': 0 if mystic_count == 0 else (refresh_count * 3)/mystic_count*50,
+        'Cuenta': entry_nombre.get()
+    }
+    ]
+
+    archivo_csv = 'datos.csv'
+    guardar_en_csv(valores_nuevos, archivo_csv)
 
 def macro():
     global exit_flag, debug_timer, covenant_count, mystic_count, refresh_count, macro_thread, use_skystones_flag, use_time_flag, skystones_max, stop_flag
@@ -275,7 +308,7 @@ def macro():
                 # Comprobar covenants/mystics
                 chk_cove()
                 chk_mystic()
-
+                time.sleep(0.3)
                 # Desplazarse hacia abajo
                 scroll_down()
 
@@ -288,11 +321,6 @@ def macro():
 
             time.sleep(0.5)
 
-
-    end_time = time.time()
-    elapsed_time = end_time - start_time
-    elapsed_datetime = datetime.timedelta(seconds=elapsed_time)
-
     # Actualiza los resultados en las variables
     covenant_count_val.set(covenant_count)
     mystic_count_val.set(mystic_count)
@@ -303,7 +331,7 @@ def macro():
 
 
 # Configurar el tamaño y título de la ventana
-root.geometry("370x200")
+root.geometry("370x240")
 root.title("Epic Seven Macro")
 
 # Configurar la ventana para que esté siempre en primer plano
@@ -322,16 +350,23 @@ label_minutes = ttk.Label(frame, text="Minutos:")
 label_minutes.grid(row=0, column=0, sticky="W", padx=5, pady=2)
 label_skystones = ttk.Label(frame, text="Skystones:")
 label_skystones.grid(row=1, column=0, sticky="W", padx=5, pady=2)
+label_nombre = ttk.Label(frame, text="Nombre:")
+label_nombre.grid(row=2, column=0, sticky="W", padx=5, pady=2)
 
 # Crear el campo de entrada
 entry_minutes = ttk.Entry(frame)
 entry_minutes.grid(row=0, column=1)
 entry_skystones = ttk.Entry(frame)
 entry_skystones.grid(row=1, column=1)
+entry_nombre = ttk.Entry(frame)
+entry_nombre.grid(row=2, column=1)
 
 # Crear un botón para ejecutar la macro
 button_run_macro = ttk.Button(frame, text="Iniciar", command=run_macro)
-button_run_macro.grid(row=0, column=2, rowspan=2, padx=10, pady=(0, 5), sticky="NS")
+button_run_macro.grid(row=0, column=2, rowspan=1, padx=10, pady=(0, 5), sticky="NS")
+# Crear un botón para exportar
+button_run_macro = ttk.Button(frame, text="Exportar", command=save_csv)
+button_run_macro.grid(row=1, column=2, rowspan=1, padx=10, pady=(0, 5), sticky="NS")
 
 # Crear etiquetas para mostrar los resultados
 label_covenant_count = ttk.Label(root, text="Covenants comprados: " + str(covenant_count))
